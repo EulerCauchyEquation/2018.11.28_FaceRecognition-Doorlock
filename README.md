@@ -12,7 +12,6 @@
 <br>
 
 ## 2. 개발 환경
-
 h/w 파트
 * Linux <br>
 * C++ <br>
@@ -28,9 +27,6 @@ app 파트
 <br>
 
 ## 3. 개발 기간
-
-<br>
-
 * 프로젝트 기간  :  18.9.1 ~ 18.11.28 <br>
 * 프로젝트 인원  :  4명
 
@@ -38,13 +34,14 @@ app 파트
 
 ## 4. OpenCV API
 
-<br>
 
 ```
 얼굴 검출  :  Haar-based cascade
 특징 검출  :  face-landmark
 얼굴 인식  :  LBPH ( Local Binary Patterns Histogram )
 ```
+
+<br>
 
 <img src="gif_1.gif"> <br>
 
@@ -59,11 +56,11 @@ app 파트
 
 <img src="png_1.png" width="500"> 
 
-<br><br>
+<br>
 
 opencv의 분류기는 1,000개 이상의 얼굴 영상과 10,000개 이상의 얼굴이 아닌 영상을 사용하여 학습되었다.<br>
 미리 학습된 이 분류기를 이용하여 face detect를 시도한다.
-<br>
+<br><br>
 이때 라즈베리파이의 계산량을 줄이기 위해 스케일을 줄여 계산한다.
 
 <br>
@@ -142,23 +139,23 @@ Mat rot_mat = rotated_face(copy, eyes);
 Mat rotated_face(Mat face, Point2f eyes[])
 {
    Point2f delta = eyes[2] - eyes[0];  // 차분, ( 어느 것이 왼쪽 눈인지 알 수 없으므로 )
-	double angle = fastAtan2(delta.y, delta.x);   // 기울기 계산 ( atan2() * 180.0/CV_PI )
-	double desiredLen = (DESIRED_RIGHT_EYE_X - DESIRED_LEFT_EYE_X); // 보정 길이
-	double len = sqrt(delta.x * delta.x + delta.y * delta.y);   // 눈 사이 거리
-	double scale = desiredLen * DESIRED_FACE_WIDTH / len;  // 보정 비율 계산
+   double angle = fastAtan2(delta.y, delta.x);   // 기울기 계산 ( atan2() * 180.0/CV_PI )
+   double desiredLen = (DESIRED_RIGHT_EYE_X - DESIRED_LEFT_EYE_X); // 보정 길이
+   double len = sqrt(delta.x * delta.x + delta.y * delta.y);   // 눈 사이 거리
+   double scale = desiredLen * DESIRED_FACE_WIDTH / len;  // 보정 비율 계산
    
-	Point2f eyesCenter = eyes[1];  // 눈 사이 중심 찾기
-	// 원하는 각도 & 크기에 대한 변환 행렬 취득
-	Mat rot_mat = getRotationMatrix2D(eyesCenter, angle, scale);   // affine 변환 행렬 ( 평행 이동은 안들어가 있음 	// 원하는 중심으로 눈의 중심 이동
-	double ex = DESIRED_FACE_WIDTH * 0.5f - eyesCenter.x;
-	double ey = DESIRED_FACE_HEIGHT * DESIRED_LEFT_EYE_Y - eyesCenter.y;
-	rot_mat.at<double>(0, 2) += ex;  // affine 행렬(2x3) 중 평행이동 원소는 (0,2) (1,2)
-	rot_mat.at<double>(1, 2) += ey;  
-	// 회전 보정 수행 - 얼굴 기울기 보정
-	Mat wraped = Mat(DESIRED_FACE_HEIGHT, DESIRED_FACE_WIDTH, CV_8U, Scalar(200));   // 최종 반환 얼굴 영상 (70x70)
-	warpAffine(face, wraped, rot_mat, wraped.size(), 
-	INTER_LINEAR, BORDER_CONSTANT, Scalar(255,255,255)); // src, dst, rot_mat, size  => 원본(src)를 rot_mat으로 보정하여 dst에 담는다
-
+   Point2f eyesCenter = eyes[1];  // 눈 사이 중심 찾기
+   // 원하는 각도 & 크기에 대한 변환 행렬 취득
+   Mat rot_mat = getRotationMatrix2D(eyesCenter, angle, scale);   // affine 변환 행렬 ( 평행 이동은 안들어가 있음 	// 원하는 중심으로 눈의 중심 이동
+   double ex = DESIRED_FACE_WIDTH * 0.5f - eyesCenter.x;
+   double ey = DESIRED_FACE_HEIGHT * DESIRED_LEFT_EYE_Y - eyesCenter.y;
+   rot_mat.at<double>(0, 2) += ex;  // affine 행렬(2x3) 중 평행이동 원소는 (0,2) (1,2)
+   rot_mat.at<double>(1, 2) += ey;  
+   // 회전 보정 수행 - 얼굴 기울기 보정
+   Mat wraped = Mat(DESIRED_FACE_HEIGHT, DESIRED_FACE_WIDTH, CV_8U, Scalar(200));   // 최종 반환 얼굴 영상 (70x70)
+   warpAffine(face, wraped, rot_mat, wraped.size(), 
+   INTER_LINEAR, BORDER_CONSTANT, Scalar(255,255,255)); // src, dst, rot_mat, size  => 원본(src)를 rot_mat으로 보정하여 dst에 담는다
+}
 ```
 
 <br>
@@ -179,7 +176,8 @@ LBPH (Local Binary Patterns Histogram)은 이미지의 질감 표현 및 얼굴�
 <br>
 
 LBPH의 유사도는 70이하 정도로 잡고 얼굴 인식을 판별한다. 숫자를 올리면 얼굴 인식은<br>
-잘 되지만 엉뚱한 사람이 인식될 가능성이 높아진다. 따라서, 여러 장소를 옮기면서 실험한 결과 70정도가 나아서 설정하였다.
+잘 되지만 엉뚱한 사람이 인식될 가능성이 높아진다. 따라서, 여러 장소를 옮기면서 실험한 결과 <br>
+70정도가 나아서 설정하였다.
 
 <br>
 
@@ -214,7 +212,7 @@ win에서 테스트한 후 linux의 이식하여 테스트 중인 사진
 
 <br>
 
-<img src="/screenshot2.png" width="600">
+<img src="/manual.png" width="600">
 
 <br>
 
@@ -222,7 +220,7 @@ win에서 테스트한 후 linux의 이식하여 테스트 중인 사진
 
 <br>
 
-<img src="/manual.png" width="600">
+<img src="/screenshot4.PNG" width="600">
 
 <br>
 
