@@ -52,7 +52,7 @@ app 파트
 하르 기반 분류기(Haar-based cascade)는 매우 단순한 특징들을 조합하여 객체를 찾아낸다. <br>
 그 특징값은 흰색 영역의 화소값의 합과 검은색 직사각형 영역의 화소값의 합의 차로 정의된다.
 
-<br><br>
+<br>
 
 <img src="png_1.png" width="500"> 
 
@@ -132,6 +132,11 @@ void find_center(Point2f eyes[], vector<Point2f> &landmarks)
 	eyes[1] = landmarks[27]; // 코
 	eyes[2] = landmarks[44]; // 오른쪽 눈
 }
+```
+
+<br>
+
+```c++
 Mat rot_mat = rotated_face(copy, eyes);
 
 ...
