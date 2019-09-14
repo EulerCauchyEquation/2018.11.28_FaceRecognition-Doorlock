@@ -16,9 +16,7 @@ h/w 파트
 * Linux <br>
 * C++ <br>
 * Rasberry Pi 3 model <br>
-* OpenCV 3.4.3 API <br><br>
-
-<br>
+* OpenCV 3.4.3 API <br>
 
 app 파트
 * Android studio <br>
@@ -115,8 +113,7 @@ bool success = facemark->fit(frame, faces, landmarks);
 
 <br>
 
-검출한 랜드마크를 가지고 얼굴 좌표를 찾아내서 회전 보정을 처리한다.
-이 과정은 얼굴을 정면으로 위치시키기 위함이다.
+검출한 랜드마크를 가지고 얼굴 중심 좌표를 얻는다.
 
 <br>
 
@@ -133,6 +130,11 @@ void find_center(Point2f eyes[], vector<Point2f> &landmarks)
 	eyes[2] = landmarks[44]; // 오른쪽 눈
 }
 ```
+
+<br>
+
+얼굴 중심 좌표를 정면으로 회전 보정을 넣은다.
+이 과정은 얼굴을 정면으로 위치시켜 얼굴인식이 잘되게 하기 위함이다.
 
 <br>
 
